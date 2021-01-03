@@ -46,3 +46,56 @@ Consider the scenario where we are trying to fetch the release dates for differe
     ...
 }
 ```
+
+A search for a release date will require looking across many fields at once. In order to quickly do searches for release dates, we’d need several indexes on our movies collection:
+
+```json
+{release_US: 1}
+{release_France: 1}
+{release_Italy: 1}
+```
+
+By using the Attribute Pattern, we can move this subset of information into an array and reduce the indexing needs. We turn this information into an array of key-value pairs:
+
+```json
+{
+    title: "Star Wars",
+    director: "George Lucas",
+    …
+    releases: [
+        {
+        location: "USA",
+        date: ISODate("1977-05-20T01:00:00+01:00")
+        },
+        {
+        location: "France",
+        date: ISODate("1977-10-19T01:00:00+01:00")
+        },
+        {
+        location: "Italy",
+        date: ISODate("1977-10-20T01:00:00+01:00")
+        },
+        {
+        location: "UK",
+        date: ISODate("1977-12-27T01:00:00+01:00")
+        },
+        … 
+    ],
+    … 
+}
+```
+
+By using the Attribute Pattern we can add organization to our documents for common characteristics and account for rare/unpredictable fields. For example, a movie released in a new or small festival. Further, moving to a key/value convention allows for the use of non-deterministic naming and the easy addition of qualifiers. For example, if our data collection was on bottles of water, our attributes might look something like:
+
+```json
+"specs": [
+    { k: "volume", v: "500", u: "ml" },
+    { k: "volume", v: "12", u: "ounces" }
+]
+```
+
+Here we break the information out into keys and values, “k” and “v”, and add in a third field, “u” which allows for the units of measure to be stored separately.
+
+```json
+{"specks.k": 1, "specs.v": 1, "specs.u": 1}
+```
