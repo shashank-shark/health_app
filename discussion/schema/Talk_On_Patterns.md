@@ -274,3 +274,120 @@ The Document Versioning Pattern is relatively easy to accomplish. It can be impl
 One drawback to this pattern is the need to access a different collection for historical information. Another is the fact that writes will be higher overall to the database. This is why one of the requirements to use this pattern is that it occurs on data that isn’t changed too frequently.
 
 When you need to keep track of changes to documents, the Document Versioning Pattern is a great option. It is relatively easy to implement and can be applied to an existing set of documents. Another benefit is that queries to the latest version of data still perform well. It does not, however, replace a dedicated version control system.
+
+## Extended reference pattern
+There are times when having separate collections for data make sense. If an entity can be thought of as a separate "thing", it often makes sense to have a separate collection. For example, in an e-commerce application, the idea of an order exists, as does a customer, and inventory. They are separate logical entities.
+
+
+**Order Collection**
+```
+{
+    _id: ObjectId("56578908765172890"),
+    date: ISO("2019-02-18"),
+    customer_id: 123,
+    order: [
+        {
+            product: "widget",
+            qty: 5,
+            cost: {
+                value: NumberDecimal("11.99"),
+                currency: "USD"
+            }
+        }
+    ]
+}
+```
+
+**Customer Collection**
+```
+{
+    _id: 123,
+    name: "katrina Pope",
+    street: "123 Main St",
+    city: "somewhere",
+    country: "someplace",
+    ...
+}
+```
+
+**Inventory Collection**
+```
+{
+    _id: ObjectId("89876543234567890"),
+    name: "widget",
+    cost: {
+        value: NumberDecimal("11.99"),
+        currency: "USD"
+    }
+    on_hand: 98325,
+    ...
+}
+```
+
+From a performance standpoint, however, this becomes problematic as we need to put the pieces of information together for a specific order. One customer can have N orders, creating a 1-N relationship. From an order standpoint, if we flip that around, they have an N-1 relationship with a customer. Embedding all of the information about a customer for each order just to reduce the JOIN operation results in a lot of duplicated information. Additionally, not all of the customer information may be needed for an order.
+
+The Extended Reference pattern provides a great way to handle these situations. Instead of duplicating all of the information on the customer, we only copy the fields we access frequently. Instead of embedding all of the information or including a reference to JOIN the information, we only embed those fields of the highest priority and most frequently accessed, such as name and address.
+
+**Customer Collection**
+```
+{
+    _id: 123,
+    name: "katrina Pope",
+    street: "123 Main St",
+    city: "somewhere",
+    country: "someplace",
+    date_of_birth: ISODate("1992-11-03"),
+    social_handles: {
+        twitter: "@somethingamazing123"
+    }
+    ...
+}
+```
+
+```
+        |
+        |
+        |
+        |
+        V
+```
+
+**Order Collection**
+```
+{
+    _id: ObjectId("56578908765172890"),
+    date: ISO("2019-02-18"),
+    customer_id: 123,
+
+    #OBSERVE HERE
+    shipping_address: {
+        name: "katrina Pope",  <----
+        street: "123 Main St", <----
+        city: "somewhere",     <----
+        country: "someplace",  <----
+        ...
+    }
+
+
+    order: [
+        {
+            product: "widget",
+            qty: 5,
+            cost: {
+                value: NumberDecimal("11.99"),
+                currency: "USD"
+            }
+        }
+    ]
+}
+```
+
+Something to think about when using this pattern is that data is duplicated. Therefore it works best if the data that is stored in the main document are fields that don't frequently change. Something like a user_id and a person's name are good options. Those rarely change.
+
+Also, bring in and duplicate only that data that's needed. Think of an order invoice. If we bring in the customer's name on an invoice, do we need their secondary phone number and non-shipping address at that point in time? Probably not, therefore we can leave that data out of the invoice collection and reference a customer collection.
+
+When information is updated, we need to think about how to handle that as well. What extended references changed? When should those be updated? If the information is a billing address, do we need to maintain that address for historical purposes, or is it okay to update? Sometimes duplication of data is better because you get to keep the historical values, which may make more sense. The address where our customer lived at the time we ship the products make more sense in the order document, then fetching the current address through the customer collection.
+
+An order management application is a classic use case for this pattern. When thinking about N-1 relationships, orders to customers, we want to reduce the joining of information to increase performance. By including a simple reference to the data that would most frequently be JOINed, we save a step in processing.
+
+If we continue with the example of an order management system, on an invoice Acme Co. may be listed as the supplier for an anvil. Having the contact information for Acme Co. probably isn't super important from an invoice standpoint. That information is better served to reside in a separate supplier collection, for example. In the invoice collection, we'd keep the needed information about the supplier as an extended reference to the supplier information.
