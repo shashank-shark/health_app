@@ -400,7 +400,7 @@ Well, this may indeed work for 99.99% of the cases, but what happens when J.K. R
 With the Outlier Pattern, we are working to prevent a few queries or documents driving our solution towards one that would not be optimal for the majority of our use cases. Not every book sold will sell millions of copies.
 
 A typical book document storing user_id information might look something like:
-```json
+```
 {
     "id": ObjectId("5689sdfsvv6s90sssas09876"),
     "title" : "Adobe Acrobat",
@@ -410,8 +410,7 @@ A typical book document storing user_id information might look something like:
 ```
 
 This would work well for a large majority of books that aren't likely to reach the "best seller" lists. Accounting for outliers though results in the customers_purchased array expanding beyond a 1000 item limit we have set, we'll add a new field to "flag" the book as an outlier.
-
-```json
+```
 {
     "_id": ObjectID("507f191e810c19729de860ea"),
     "title": "Harry Potter, the Next Chapter",
@@ -425,3 +424,11 @@ This would work well for a large majority of books that aren't likely to reach t
 We'd then move the overflow information into a separate document linked with the book's id. Inside the application, we would be able to determine if a document has a has_extras field with a value of true. If that is the case, the application would retrieve the extra information. This could be handled so that it is rather transparent for most of the application code.
 
 Many design decisions will be based on the application workload, so this solution is intended to show an example of the Outlier Pattern. The important concept to grasp here is that the outliers have a substantial enough difference in their data that, if they were considered "normal", changing the application design for them would degrade performance for the more typical queries and documents.
+
+The Outlier Pattern is an advanced pattern, but one that can result in large performance improvements. It is frequently used in situations when popularity is a factor, such as in social network relationships, book sales, movie reviews, etc. The Internet has transformed our world into a much smaller place and when something becomes popular, it transforms the way we need to model the data around the item.
+
+One example is a customer that has a video conferencing product. The list of authorized attendees in most video conferences can be kept in the same document as the conference. However, there are a few events, like a company's all hands, that have thousands of expected attendees. For those outlier conferences, the customer implemented "overflow" documents to record those long lists of attendees.
+
+The problem that the Outlier Pattern addresses is preventing a few documents or queries to determine an application's solution. Especially when that solution would not be optimal for the majority of use cases. We can leverage MongoDB's flexible data model to add a field to the document "flagging" it as an outlier. Then, inside the application, we handle the outliers slightly differently. By tailoring your schema for the typical document or query, application performance will be optimized for those normal use cases and the outliers will still be addressed.
+
+One thing to consider with this pattern is that it often is tailored for specific queries and situations. Therefore, ad hoc queries may result in less than optimal performance. Additionally, as much of the work is done within the application code itself, additional code maintenance may be required over time.
