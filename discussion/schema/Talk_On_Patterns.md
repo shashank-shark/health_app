@@ -391,3 +391,37 @@ When information is updated, we need to think about how to handle that as well. 
 An order management application is a classic use case for this pattern. When thinking about N-1 relationships, orders to customers, we want to reduce the joining of information to increase performance. By including a simple reference to the data that would most frequently be JOINed, we save a step in processing.
 
 If we continue with the example of an order management system, on an invoice Acme Co. may be listed as the supplier for an anvil. Having the contact information for Acme Co. probably isn't super important from an invoice standpoint. That information is better served to reside in a separate supplier collection, for example. In the invoice collection, we'd keep the needed information about the supplier as an extended reference to the supplier information.
+
+## Outlier Pattern
+magine you are starting an e-commerce site that sells books. One of the queries you might be interested in running is "who has purchased a particular book". This could be useful for a recommendation system to show your customers similar books of interest. You decide to store the user_id of a customer in an array for each book. Simple enough, right?
+
+Well, this may indeed work for 99.99% of the cases, but what happens when J.K. Rowling releases a new Harry Potter book and sales spike in the millions? The 16MB BSON document size limit could easily be reached. Redesigning our entire application for this outlier situation could result in reduced performance for the typical book, but we do need to take it into consideration.
+
+With the Outlier Pattern, we are working to prevent a few queries or documents driving our solution towards one that would not be optimal for the majority of our use cases. Not every book sold will sell millions of copies.
+
+A typical book document storing user_id information might look something like:
+```json
+{
+    "id": ObjectId("5689sdfsvv6s90sssas09876"),
+    "title" : "Adobe Acrobat",
+    "author" : "shashank",
+    "customers_purchased" : ["user00", "user01", "user02"]
+}
+```
+
+This would work well for a large majority of books that aren't likely to reach the "best seller" lists. Accounting for outliers though results in the customers_purchased array expanding beyond a 1000 item limit we have set, we'll add a new field to "flag" the book as an outlier.
+
+```json
+{
+    "_id": ObjectID("507f191e810c19729de860ea"),
+    "title": "Harry Potter, the Next Chapter",
+    "author": "J.K. Rowling",
+    …,
+   "customers_purchased": ["user00", "user01", "user02", …, "user999"],
+   "has_extras": "true"
+}
+```
+
+We'd then move the overflow information into a separate document linked with the book's id. Inside the application, we would be able to determine if a document has a has_extras field with a value of true. If that is the case, the application would retrieve the extra information. This could be handled so that it is rather transparent for most of the application code.
+
+Many design decisions will be based on the application workload, so this solution is intended to show an example of the Outlier Pattern. The important concept to grasp here is that the outliers have a substantial enough difference in their data that, if they were considered "normal", changing the application design for them would degrade performance for the more typical queries and documents.
