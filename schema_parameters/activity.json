@@ -1,0 +1,20 @@
+{
+    "steps": "<int>",
+    "walking_running_distance": "<double>",
+    "flights_climbed": "<int>",
+    "workouts": "<timestamp>",
+    "workout_intensity": "<list_of_fixed_values",
+    "active_energy": "<double>",
+    "activity_minutes": "<double>",
+    "cycling_distance": "<double>",
+    "exercise_minutes": "<double>",
+    "move_minutes": "<double>",
+    "pushes": "<double>",
+    "resting_energy": "<double>",
+    "stand_hours": "<double>",
+    "stand_minutes": "<double>",
+    "swimming_distance": "<double>",
+    "swimming_strokes": "<double>",
+    "vo2_max": "<double>",
+    "wheelchair_distance": "<double>"
+}

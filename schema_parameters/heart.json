@@ -1,0 +1,13 @@
+{
+    "blood_pressure": "<double>",
+    "electrocardiograms": "<double>",
+    "heart_rate": "<double>",
+    "heart_rate_variability": "<double>",
+    "high_heart_rate_notification": "<double>",
+    "irregular_rhythm_notification": "<double>",
+    "low_heart_rate_notification": "<double>",
+    "peripheral_perfusion_index": "<double>",
+    "resting_heart_rate": "<double>",
+    "v02_max": "<double>",
+    "walking_heart_rate_average": "<double>"
+}
