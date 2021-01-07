@@ -550,3 +550,11 @@ More time goes by and now we’re discovering that fewer and fewer people have a
 ```
 
 The flexibility of the MongoDB document model allows for all of this to occur without downtime of the database. From an application standpoint, it can be designed to read both versions of the schema. This application change in how to handle the schema difference shouldn’t require downtime either, assuming there is more than a single app server involved.
+
+The Schema Versioning pattern is great for when application downtime isn’t an option, updating the documents may take hours, days, or weeks of time to complete, updating the documents to the new version isn’t a requirement, or a combination of any of these. It allows for a new schema_version field to easily be added and for the application to adjust to these changes. Additionally, it provides us as developers the opportunity to better decide when and how data migrations will take place. All of these things result in less future technical debt, another big advantage for this pattern.
+
+As with the other patterns mentioned in this series, there are some things to consider with the Schema Versioning pattern too. If you have an index on a field that is not located at the same level in the document, you may need 2 indexes while you are migrating the documents.
+
+One of the main benefits of this pattern is the simplicity involved in the data model itself. All that is required is to add the schema_version field. Then allow the application to handle and process the different document versions.
+
+Additionally, as was seen in the use case example, we are able to combine schema design patterns together for extra performance. In this case, using the Schema Versioning and Attribute patterns together. Allowing to make schema upgrades without downtime makes the Schema Versioning pattern particularly powerful in MongoDB and could very well be enough of a reason to use MongoDB’s document model versus a legacy tabular database for your next application.
