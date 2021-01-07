@@ -9,7 +9,6 @@ There are multiple schema design patterns that could be applied for our project,
 5. Document Versioning Pattern
 6. Extended Reference Pattern
 7. Outlier Pattern
-8. Preallocated Pattern
 9. Polymorphic Pattern
 10. Schema Versioning Pattern
 11. Subset Pattern
@@ -432,3 +431,71 @@ One example is a customer that has a video conferencing product. The list of aut
 The problem that the Outlier Pattern addresses is preventing a few documents or queries to determine an application's solution. Especially when that solution would not be optimal for the majority of use cases. We can leverage MongoDB's flexible data model to add a field to the document "flagging" it as an outlier. Then, inside the application, we handle the outliers slightly differently. By tailoring your schema for the typical document or query, application performance will be optimized for those normal use cases and the outliers will still be addressed.
 
 One thing to consider with this pattern is that it often is tailored for specific queries and situations. Therefore, ad hoc queries may result in less than optimal performance. Additionally, as much of the work is done within the application code itself, additional code maintenance may be required over time.
+
+## The Polymorphic Pattern
+When all documents in a collection are of similar, but not identical, structure, we call this the Polymorphic Pattern. As mentioned, the Polymorphic Pattern is useful when we want to access (query) information from a single collection. Grouping documents together based on the queries we want to run (instead of separating the object across tables or collections) helps improve performance. Imagine that our application tracks professional sports athletes across all different sports.
+
+We still want to be able to access all of the athletes in our application, but the attributes of each athlete are very different. This is where the Polymorphic Pattern shines. In the example below, we store data for athletes from two different sports in the same collection. The data stored about each athlete does not need to be the same even though the documents are in the same collection.
+
+```
+{
+    "sport" : "ten_pin_bowling",
+    "athlete_name" : "Earl Anthony",
+    "career_earnings" : { "value" : NumberDecimal("1441061"), "currency" : "USD" },
+    "300_games" : 25,
+    "career_titles" : 43,
+    "other_sports" : "baseball"
+},
+{
+    "sport" : "tennis",
+    "athlete_name" : "Martina Navratilova",
+    "career_earnings" : { "value" : NumberDecimal("216226089"), "currency" : "USD"},
+    "event" : {
+        "type" : "singles",
+        "career_tournaments" : 390,
+        "career_titles" : 167
+    }
+}
+```
+
+Professional athlete records have some similarities, but also some differences. With the Polymorphic Pattern, we are easily able to accommodate these differences. If we were not using the Polymorphic Pattern, we might have a collection for Bowling Athletes and a collection for Tennis Athletes. When we wanted to query on all athletes, we would need to do a time-consuming and potentially complex join. Instead, since we are using the Polymorphic Pattern, all of our data is stored in one Athletes collection and querying for all athletes can be accomplished with a simple query.
+
+This design pattern can flow into embedded sub-documents as well. In the above example, Martina Navratilova didn't just compete as a single player, so we might want to structure her record as follows:
+
+```
+{
+    "sport" : "tennis",
+    "athlete_name": "Martina Navratilova",
+    "career_earnings": {"value": NumericalDecimal("216226089"), "currency": "USD"},
+    "career_tournaments": 390,
+    "career_titles": 167,
+    "event": [{
+        "type": "singles",
+        "career_tournaments": 390,
+        "career_titles": 167
+    },
+    {
+        "type": "doubles",
+        "career_tournaments": 233,
+        "career_titles": 177,
+        "partner" : ["Tomanova", "Fernandez", "Morozova", "Evert", ...]
+    }]
+}
+```
+
+From an application development standpoint, when using the Polymorphic Pattern we're going to look at specific fields in the document or sub-document to be able to track differences. We'd know, for example, that a tennis player athlete might be involved with different events, while a different sports player may not be. This will, typically, require different code paths in the application code based on the information in a given document. Or, perhaps, different classes or subclasses are written to handle the differences between tennis, bowling, soccer, and rugby players.
+
+One example use case of the Polymorphic Pattern is Single View applications. Imagine working for a company that, over the course of time, acquires other companies with their technology and data patterns. For example, each company has many databases, each modeling "insurances with their customers" in a different way. Then you buy those companies and want to integrate all of those systems into one. Merging these different systems into a unified SQL schema is costly and time-consuming.
+
+MetLife was able to leverage MongoDB and the Polymorphic Pattern to build their single view application in a few months. Their Single View application aggregates data from multiple sources into a central repository allowing customer service, insurance agents, billing, and other departments to get a 360° picture of a customer. This has allowed them to provide better customer service at a reduced cost to the company. Further, using MongoDB's flexible data model and the Polymorphic Pattern, the development team was able to innovate quickly to bring their product online.
+
+A Single View application is one use case of the Polymorphic Pattern. It also works well for things like product catalogs where a bicycle has different attributes than a fishing rod. Our athlete example could easily be expanded into a more full-fledged content management system and utilize the Polymorphic Pattern there.
+
+The Polymorphic Pattern is used when documents have more similarities than they have differences. Typical use cases for this type of schema design would be:
+
+* Single View applications
+* Content management
+* Mobile applications
+* A product catalog
+
+The Polymorphic Pattern provides an easy-to-implement design that allows for querying across a single collection and is a starting point for many of the design patterns.
