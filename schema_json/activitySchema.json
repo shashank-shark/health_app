@@ -1,86 +1,86 @@
 {
-    $jsonSchema: {
-      required: [
-        'steps',
-        'walking_running_distance',
-        'stand_hours',
-        'stand_minutes'
-      ],
-      properties: {
-        workout_intensity: {
-          'enum': [
-            'low',
-            'medium',
-            'high'
-          ]
+  "$jsonSchema":{
+     "required":[
+        "steps",
+        "walking_running_distance",
+        "stand_hours",
+        "stand_minutes"
+     ],
+     "properties":{
+        "workout_intensity":{
+           "enum":[
+              "low",
+              "medium",
+              "high"
+           ]
         },
-        activity_energy: {
-          'enum': [
-            'low',
-            'medium',
-            'high'
-          ]
+        "activity_energy":{
+           "enum":[
+              "low",
+              "medium",
+              "high"
+           ]
         },
-        steps: {
-          bsonType: 'int',
-          minimum: 1
+        "steps":{
+           "bsonType":"int",
+           "minimum":1
         },
-        walking_running_distance: {
-          bsonType: 'double',
-          minimum: 1
+        "walking_running_distance":{
+           "bsonType":"double",
+           "minimum":1
         },
-        stand_hours: {
-          bsonType: 'double',
-          minimum: 0.01
+        "stand_hours":{
+           "bsonType":"double",
+           "minimum":0.01
         },
-        stand_minutes: {
-          bsonType: 'double',
-          minimum: 0.1
+        "stand_minutes":{
+           "bsonType":"double",
+           "minimum":0.1
         },
-        flights_climbed: {
-          bsonType: 'int',
-          minimum: 0
+        "flights_climbed":{
+           "bsonType":"int",
+           "minimum":0
         },
-        workouts: {
-          bsonType: 'double',
-          minimum: 0
+        "workouts":{
+           "bsonType":"double",
+           "minimum":0
         },
-        cycling_distance: {
-          bsonType: 'double',
-          minimum: 0
+        "cycling_distance":{
+           "bsonType":"double",
+           "minimum":0
         },
-        exercise_minutes: {
-          bsonType: 'double',
-          minimum: 0
+        "exercise_minutes":{
+           "bsonType":"double",
+           "minimum":0
         },
-        move_minutes: {
-          bsonType: 'double',
-          minimum: 0
+        "move_minutes":{
+           "bsonType":"double",
+           "minimum":0
         },
-        pushes: {
-          bsonType: 'int',
-          minimum: 0
+        "pushes":{
+           "bsonType":"int",
+           "minimum":0
         },
-        resting_energy: {
-          bsonType: 'double',
-          minimum: 0
+        "resting_energy":{
+           "bsonType":"double",
+           "minimum":0
         },
-        swimming_distance: {
-          bsonType: 'double',
-          minimum: 0
+        "swimming_distance":{
+           "bsonType":"double",
+           "minimum":0
         },
-        swimming_strokes: {
-          bsonType: 'int',
-          minimum: 0
+        "swimming_strokes":{
+           "bsonType":"int",
+           "minimum":0
         },
-        vo2_max: {
-          bsonType: 'int',
-          minimum: 0
+        "vo2_max":{
+           "bsonType":"int",
+           "minimum":0
         },
-        wheelchair_distance: {
-          bsonType: 'double',
-          minimum: 0
+        "wheelchair_distance":{
+           "bsonType":"double",
+           "minimum":0
         }
-      }
-    }
+     }
   }
+}
