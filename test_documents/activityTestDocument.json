@@ -1,0 +1,19 @@
+{
+    "steps": 1000,
+    "walking_running_distance": 8832743.22,
+    "flights_climbed": 7212,
+    "workouts": 989.22,
+    "workout_intensity": ["low", "medium", "high"],
+    "activity_energy": ["low", "medium", "high"],
+    "cycling_distance": 928982.2,
+    "exercise_minutes": 62732.23,
+    "move_minutes": 983.213,
+    "pushes": 892329,
+    "resting_energy": 29839.21,
+    "stand_hours": 82.3,
+    "stand_minutes": 9834732.2222,
+    "swimming_distance": 828732.22,
+    "swimming_strokes": 87232,
+    "vo2_max": 99,
+    "wheelchair_distance": 92302.22
+}
