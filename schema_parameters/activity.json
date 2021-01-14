@@ -3,7 +3,7 @@
     "walking_running_distance": "<double>",
     "flights_climbed": "<int>",
     "workouts": "<timestamp>",
-    "workout_intensity": "<list_of_fixed_values",
+    "workout_intensity": "<list_of_fixed_values>",
     "active_energy": "<double>",
     "activity_minutes": "<double>",
     "cycling_distance": "<double>",
