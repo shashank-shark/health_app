@@ -1,0 +1,13 @@
+{
+    "blood_pressure": 133.2121,
+    "electrocardiograms": 232.12,
+    "heart_rate": 100,
+    "heart_rate_variability": 2232.2,
+    "high_heart_rate_notification": ["true", "false"],
+    "irregular_rhythm_notification": ["true", "false"],
+    "low_heart_rate_notification": ["true", "false"],
+    "peripheral_perfusion_index": 2322.1,
+    "resting_heart_rate": 231.2,
+    "v02_max": 2312.2,
+    "walking_heart_rate_average": 22321.1
+}
